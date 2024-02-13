@@ -1,0 +1,79 @@
+
+
+$ git clone https://github.com/llvm/llvm-project
+$ cd llvm-project
+$ git checkout c5dede880d175f7229c9b2923f4753e12702305d
+$ mkdir build
+$ cd build
+
++++++++++++++++++++++++++++++++++++++++++
+解决安装CMake报错：Could not find CMAKE_ROOT !!! CMake has most likely not been installed correctly.
+cmake --version
+如果cmake版本正常显示，则使用：
+
+
+
+
+
+
+++++++++++++
+
+llvm的makefile编译
+amd00@MZ32-00:~/yk_repo/llvm-project/build_makefile$
+最好先清空 rm -rf *
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp;lldb;lld"
+
+make -j16
+sudo make install
+
+llvm的ninja编译
+apt-get -y install ninja-build
+amd00@MZ32-00:~/yk_repo/llvm-project/build-ninja$
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DLLVM_ENABLE_ASSERTIONS=ON  ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp;lldb;lld"
+ninja
+
+
+cmake -G Ninja ../llvm \
+   -DLLVM_ENABLE_PROJECTS=mlir \
+   -DLLVM_BUILD_EXAMPLES=ON \
+   -DLLVM_TARGETS_TO_BUILD="X86;NVPTX" \
+   -DMLIR_ENABLE_CUDA_RUNNER=ON \
+   -DCMAKE_BUILD_TYPE=Debug \
+   -DLLVM_ENABLE_ASSERTIONS=ON \
+   -DCMAKE_C_COMPILER=clang \
+   -DCMAKE_CXX_COMPILER=clang++ \
+   -DLLVM_ENABLE_RTTI=ON \
+   -DLLVM_INSTALL_UTILS=ON \
+   -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp;lldb;lld" \
+   -DMLIR_INCLUDE_INTEGRATION_TESTS=ON
+
+
+amd00@MZ32-00:~/yk_repo/llvm-project/build_ninja$ sudo ninja install
+
+root@MZ32-00:/home/amd00/yk_repo/triton# source .venv/bin/activate
+(triton) root@MZ32-00:/home/amd00/yk_repo/triton# export LLVM_BUILD_DIR=/home/amd00/yk_repo/llvm-project/build_XXXXX
+(triton) root@MZ32-00:/home/amd00/yk_repo/triton#
+LLVM_INCLUDE_DIRS=$LLVM_BUILD_DIR/include LLVM_LIBRARY_DIR=$LLVM_BUILD_DIR/lib LLVM_SYSPATH=$LLVM_BUILD_DIR pip install -e python
+===
+
+
+sudo apt install libstdc++-12-dev
+
+
+
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ git status
+HEAD detached at c230138011cb
+nothing to commit, working tree clean
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ git remote -v
+origin  https://github.com/SeekPoint/llvm-project (fetch)
+origin  https://github.com/SeekPoint/llvm-project (push)
+amd00@MZ32-00:~/yk_repo/llvm-project/build$
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON  ../llvm -DLLVM_ENABLE_PROJECTS="mlir;llvm"
+ninja -j32
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ sudo ninja install
+
+============================= 、
+1.setpy.py路径问题-bug，必须在某个tag下面做
+2. triton/python# pip install -e . 而不是 triton# pip install -e python
+root@MZ32-00:/home/amd00/yk_repo/triton# git checkout v2.1.0
+root@MZ32-00:/home/amd00/yk_repo/triton/python# pip install -e .

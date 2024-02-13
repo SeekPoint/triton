@@ -1,0 +1,35 @@
+
+OpenAI/Triton MLIR 第三章: Triton-shared开箱
+https://cloud.tencent.com/developer/article/2372957
+OpenAI/Triton MLIR 第零章: 源码编译
+https://zhuanlan.zhihu.com/p/628022771
+OpenAI/Triton MLIR 第一章: Triton DSL
+http://giantpandacv.com/project/%E9%83%A8%E7%BD%B2%E4%BC%98%E5%8C%96/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%BC%96%E8%AF%91%E5%99%A8/OpenAI%20Triton%20MLIR%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20Triton%20DSL/
+https://zhuanlan.zhihu.com/p/628394465
+OpenAI/Triton MLIR 第二章: Batch GEMM benchmark
+https://zhuanlan.zhihu.com/p/629654531
+
+
+OpenAI Triton源码构建
+https://zhuanlan.zhihu.com/p/672728747
+
+
+【BBuf的CUDA笔记】十三，OpenAI Triton 入门笔记一
+https://blog.csdn.net/just_sort/article/details/135689404
+
+
+OpenAI Triton 介绍
+https://zhuanlan.zhihu.com/p/606435901
+
+Triton 源码初步研读
+https://www.cnblogs.com/CocoML/p/17376187.html
+
+谈谈对OpenAI Triton的一些理解
+https://zhuanlan.zhihu.com/p/613244988
+
+
+从0开始通过源码安装 Triton
+https://zhuanlan.zhihu.com/p/673525339
+
+https://www.zhihu.com/question/622685131
+如何入门 OpenAI Triton 编程?
