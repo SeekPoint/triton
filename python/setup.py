@@ -14,7 +14,7 @@ from typing import NamedTuple
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.build_py import build_py
-
+from pydebug import gd, infoTensor
 
 # Taken from https://github.com/pytorch/pytorch/blob/master/tools/setup_helpers/env.py
 def check_env_flag(name: str, default: str = "") -> bool:
@@ -37,9 +37,11 @@ def get_codegen_backends():
     backends = []
     env_prefix = "TRITON_CODEGEN_"
     for name, _ in os.environ.items():
+        gd.debuginfo(prj="ds", info=f'name={name}')
         if name.startswith(env_prefix) and check_env_flag(name):
             assert name.count(env_prefix) <= 1
             backends.append(name.replace(env_prefix, '').lower())
+    gd.debuginfo(prj="ds", info=f'backends={backends}')
     return backends
 
 
@@ -91,13 +93,20 @@ def get_llvm_package_info():
 
 def get_thirdparty_packages(triton_cache_path):
     packages = [get_pybind11_package_info(), get_llvm_package_info()]
+    gd.debuginfo(prj="ds", info=f'packages={packages}')
     thirdparty_cmake_args = []
     for p in packages:
+        gd.debuginfo(prj="ds", info=f'p={p}')
         package_root_dir = os.path.join(triton_cache_path, p.package)
         package_dir = os.path.join(package_root_dir, p.name)
+        gd.debuginfo(prj="ds", info=f'package_dir={package_dir}')
+
         if p.syspath_var_name in os.environ:
             package_dir = os.environ[p.syspath_var_name]
+
         version_file_path = os.path.join(package_dir, "version.txt")
+        gd.debuginfo(prj="ds", info=f'version_file_path={version_file_path}')
+
         if p.syspath_var_name not in os.environ and\
            (not os.path.exists(version_file_path) or Path(version_file_path).read_text() != p.url):
             try:
@@ -112,18 +121,22 @@ def get_thirdparty_packages(triton_cache_path):
             # write version url to package_dir
             with open(os.path.join(package_dir, "version.txt"), "w") as f:
                 f.write(p.url)
+
         if p.include_flag:
             thirdparty_cmake_args.append(f"-D{p.include_flag}={package_dir}/include")
+
         if p.lib_flag:
             thirdparty_cmake_args.append(f"-D{p.lib_flag}={package_dir}/lib")
+
+    gd.debuginfo(prj="ds", info=f'thirdparty_cmake_args={thirdparty_cmake_args}')
     return thirdparty_cmake_args
 
 # ---- package data ---
 
 
 def download_and_copy_ptxas():
-
     base_dir = os.path.dirname(__file__)
+    gd.debuginfo(prj="ds", info=f'base_dir={base_dir}')
     src_path = "bin/ptxas"
     version = "12.1.105"
     url = f"https://conda.anaconda.org/nvidia/label/cuda-12.1.1/linux-64/cuda-nvcc-{version}-0.tar.bz2"
@@ -133,11 +146,13 @@ def download_and_copy_ptxas():
     is_linux = platform.system() == "Linux"
     download = False
     if is_linux:
+        gd.debuginfo(prj="ds")
         download = True
         if os.path.exists(dst_path):
             curr_version = subprocess.check_output([dst_path, "--version"]).decode("utf-8").strip()
             curr_version = re.search(r"V([.|\d]+)", curr_version).group(1)
             download = curr_version != version
+
     if download:
         print(f'downloading and extracting {url} ...')
         ftpstream = urllib.request.urlopen(url)
@@ -147,6 +162,8 @@ def download_and_copy_ptxas():
             src_path = os.path.join(temp_dir, src_path)
             os.makedirs(os.path.split(dst_path)[0], exist_ok=True)
             shutil.copy(src_path, dst_path)
+
+    gd.debuginfo(prj="ds", info=f'dst_suffix={dst_suffix}')
     return dst_suffix
 
 
@@ -154,12 +171,14 @@ def download_and_copy_ptxas():
 
 class CMakeBuildPy(build_py):
     def run(self) -> None:
+        gd.debuginfo(prj="ds")
         self.run_command('build_ext')
         return super().run()
 
 
 class CMakeExtension(Extension):
     def __init__(self, name, path, sourcedir=""):
+        gd.debuginfo(prj="ds")
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
         self.path = path
@@ -170,13 +189,16 @@ class CMakeBuild(build_ext):
     user_options = build_ext.user_options + [('base-dir=', None, 'base directory of Triton')]
 
     def initialize_options(self):
+        gd.debuginfo(prj="ds")
         build_ext.initialize_options(self)
         self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
     def finalize_options(self):
+        gd.debuginfo(prj="ds")
         build_ext.finalize_options(self)
 
     def run(self):
+        gd.debuginfo(prj="ds")
         try:
             out = subprocess.check_output(["cmake", "--version"])
         except OSError:
@@ -193,6 +215,7 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def get_cmake_dir(self):
+        gd.debuginfo(prj="ds")
         plat_name = sysconfig.get_platform()
         python_version = sysconfig.get_python_version()
         dir_name = f"cmake.{plat_name}-{sys.implementation.name}-{python_version}"
@@ -201,6 +224,7 @@ class CMakeBuild(build_ext):
         return cmake_dir
 
     def build_extension(self, ext):
+        gd.debuginfo(prj="ds")
         lit_dir = shutil.which('lit')
         user_home = os.getenv("HOME") or os.getenv("USERPROFILE") or \
             os.getenv("HOMEPATH") or None
@@ -231,6 +255,7 @@ class CMakeBuild(build_ext):
 
         # configuration
         cfg = get_build_type()
+        gd.debuginfo(prj="ds", info=f'cfg={cfg}')
         build_args = ["--config", cfg]
 
         codegen_backends = get_codegen_backends()
@@ -261,9 +286,9 @@ class CMakeBuild(build_ext):
         subprocess.check_call(["cmake", self.base_dir] + cmake_args, cwd=cmake_dir, env=env)
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=cmake_dir)
 
-
+gd.debuginfo(prj="ds", info='================================')
 download_and_copy_ptxas()
-
+gd.debuginfo(prj="ds", info='================================')
 
 setup(
     name="triton",

@@ -1,6 +1,6 @@
 import triton
 import triton.language as tl
-
+from pydebug import gd
 
 # triton kernel
 @triton.jit

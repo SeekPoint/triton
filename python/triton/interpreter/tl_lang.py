@@ -6,7 +6,7 @@ from .core import ExecutionContext
 from .memory_map import MemoryMap
 
 torch = torch_wrapper.torch
-
+from pydebug import gd
 
 def _primitive_to_tensor(x):
     """

@@ -8,7 +8,7 @@ from typing import Callable, List, Sequence, TypeVar
 from .._C.libtriton.triton import ir
 from ..runtime.jit import jit
 from . import math, semantic
-
+from pydebug import gd
 T = TypeVar('T')
 
 TRITON_MAX_TENSOR_NUMEL = 131072

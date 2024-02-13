@@ -12,7 +12,7 @@ import torch
 
 from .. import cdiv, jit
 from .. import language as tl
-
+from pydebug import gd
 
 @jit
 def _fwd_kernel(

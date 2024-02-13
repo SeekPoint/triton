@@ -6,7 +6,7 @@ from typing import Dict
 
 from ..testing import do_bench
 from .jit import KernelInterface
-
+from pydebug import gd
 
 class OutOfResources(Exception):
     def __init__(self, required, limit, name):

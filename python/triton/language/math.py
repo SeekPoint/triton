@@ -2,7 +2,7 @@ import functools
 import os
 
 from . import core
-
+from pydebug import gd
 
 @functools.lru_cache()
 def libdevice_path():

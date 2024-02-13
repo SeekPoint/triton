@@ -15,7 +15,7 @@ from ..common.backend import get_backend, path_to_ptxas
 
 TRITON_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRITON_VERSION = "2.1.0"
-
+from pydebug import gd
 
 def get_cuda_stream(idx=None):
     if idx is None:

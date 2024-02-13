@@ -3,7 +3,7 @@ from __future__ import annotations  # remove after python 3.11
 import warnings
 from functools import wraps
 from typing import List, Optional, Sequence, Tuple, TypeVar
-
+from pydebug import gd
 from .._C.libtriton.triton import ir
 from . import core as tl
 

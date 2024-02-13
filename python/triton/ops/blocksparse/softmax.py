@@ -3,7 +3,7 @@ import torch
 from ... import jit
 from ... import language as tl
 from ... import next_power_of_2
-
+from pydebug import gd
 
 def num_warps(n):
     if n <= 128:

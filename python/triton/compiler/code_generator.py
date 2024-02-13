@@ -12,7 +12,7 @@ from ..language import constexpr, tensor
 from ..runtime import JITFunction
 from .errors import (CompilationError, CompileTimeAssertionFailure,
                      UnsupportedLanguageConstruct)
-
+from pydebug import gd
 
 def mangle_ty(ty):
     if ty.is_ptr():

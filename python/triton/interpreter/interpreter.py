@@ -10,7 +10,7 @@ from .core import ExecutionContext
 from .memory_map import MemoryMap
 from .tl_lang import (TritonLangProxy, WrappedTensor, _primitive_to_tensor,
                       debugger_constexpr)
-
+from pydebug import gd
 torch = torch_wrapper.torch
 tl_method_backup = {}
 

@@ -9,7 +9,7 @@ from typing import List
 import triton
 from triton.compiler.code_generator import kernel_suffix
 from triton.compiler.make_launcher import ty_to_cpp
-
+from pydebug import gd
 desc = """
 Triton ahead-of-time compiler:
 

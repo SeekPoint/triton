@@ -2,7 +2,7 @@ import torch
 
 import triton
 import triton.language as tl
-
+from pydebug import gd
 
 @triton.jit
 def kernel(X, stride_xm, stride_xn, BLOCK: tl.constexpr):

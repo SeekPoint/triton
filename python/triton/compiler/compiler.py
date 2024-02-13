@@ -26,7 +26,7 @@ from ..runtime.jit import (JITFunction, get_cuda_stream, get_current_device,
 from ..tools.disasm import extract
 from .code_generator import ast_to_ttir
 from .make_launcher import make_stub
-
+from pydebug import gd
 
 def inline_triton_ir(mod):
     pm = ir.pass_manager(mod.context)
