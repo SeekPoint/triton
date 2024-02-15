@@ -1,0 +1,39 @@
+重复使用之前的pybind11安装
+
+amd00@MZ32-00:~/yk_repo/triton-v2.1.0$ git checkout tag_v2.1.0
+Branch 'tag_v2.1.0' set up to track remote branch 'tag_v2.1.0' from 'origin'.
+Switched to a new branch 'tag_v2.1.0'
+amd00@MZ32-00:~/yk_repo/triton-v2.1.0$ ll cmake/   ===并没有llvm-hash.txt
+total 20
+drwxrwxr-x  2 amd00 amd00 4096  2月 15 22:38 ./
+drwxrwxr-x 16 amd00 amd00 4096  2月 15 22:38 ../
+-rw-rw-r--  1 amd00 amd00 8721  2月 15 22:38 FindLLVM.cmake
+
+amd00@MZ32-00:~/yk_repo/triton-v2.1.0/python$ git branch
+  main
+* tag_v2.1.0
+amd00@MZ32-00:~/yk_repo/triton-v2.1.0/python$vim setup.py  ======找到合适的llvm版本
+
+    name = f'llvm+mlir-17.0.0-{arch}-{system_suffix}-{release_suffix}'
+    version = "llvm-17.0.0-c5dede880d17"
+    url = f"https://github.com/ptillet/triton-llvm-releases/releases/download/{version}/{name}.tar.xz"
+
+amd00@MZ32-00:~/yk_repo/llvm-project$ git checkout c5dede880d17
+Updating files: 100% (8795/8795), done.
+Previous HEAD position was f733b4fb9b8b Fix build failure introduced in https://reviews.llvm.org/D145208
+HEAD is now at c5dede880d17 [libc]  Add optimized memset for RISCV
+amd00@MZ32-00:~/yk_repo/llvm-project$
+
+
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ ===这里用了Debug，而不是Release
+cmake -G Ninja ../llvm    -DLLVM_ENABLE_PROJECTS=mlir    -DLLVM_BUILD_EXAMPLES=ON    -DLLVM_TARGETS_TO_BUILD="X86;NVPTX;RISCV;AMDGPU"    -DMLIR_ENABLE_CUDA_RUNNER=ON    -DCMAKE_BUILD_TYPE=Debug    -DLLVM_ENABLE_ASSERTIONS=ON    -DCMAKE_C_COMPILER=gcc    -DCMAKE_CXX_COMPILER=g++    -DLLVM_ENABLE_RTTI=ON    -DLLVM_INSTALL_UTILS=ON    -DMLIR_INCLUDE_INTEGRATION_TESTS=ON
+
+
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ ninja -j32
+amd00@MZ32-00:~/yk_repo/llvm-project/build$ sudo ninja install
+
+
+amd00@MZ32-00:~/yk_repo/triton-v2.1.0/python$ export LLVM_BUILD_DIR=/home/amd00/yk_repo/llvm-project/build
+必须用sudo，可能下载失败而中断！
+LLVM_INCLUDE_DIRS=$LLVM_BUILD_DIR/include LLVM_LIBRARY_DIR=$LLVM_BUILD_DIR/lib LLVM_SYSPATH=$LLVM_BUILD_DIR sudo python3 -m  pip install -e .
+

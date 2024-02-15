@@ -1,0 +1,40 @@
+OpenAI Triton MLIR 第零章 源码编译
+
+http://giantpandacv.com/project/%E9%83%A8%E7%BD%B2%E4%BC%98%E5%8C%96/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%BC%96%E8%AF%91%E5%99%A8/OpenAI%20Triton%20MLIR%20%E7%AC%AC%E9%9B%B6%E7%AB%A0%20%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/
+
+
+===严格按照各个版本做！！！
+
+
+pitfall-1
+libstdc++ version must be at least 7.1.
+
+参考 https://github.com/llvm/llvm-project/issues/63988
+解决==使用gcc，而不是clang
+amd00@MZ32-00:~/yk_repo/llvm-project/build$
+sudo apt-get install g++-12
+cmake -G Ninja ../llvm    -DLLVM_ENABLE_PROJECTS=mlir    -DLLVM_BUILD_EXAMPLES=ON    -DLLVM_TARGETS_TO_BUILD="X86;NVPTX;RISCV;AMDGPU"    -DMLIR_ENABLE_CUDA_RUNNER=ON    -DCMAKE_BUILD_TYPE=Release    -DLLVM_ENABLE_ASSERTIONS=ON    -DCMAKE_C_COMPILER=gcc    -DCMAKE_CXX_COMPILER=g++    -DLLVM_ENABLE_RTTI=ON    -DLLVM_INSTALL_UTILS=ON    -DMLIR_INCLUDE_INTEGRATION_TESTS=ON
+
+
+pitfall-2
+编译triton找到了之前安装的llvm-14==/usr/lib/llvm-14，而不是本文下载安装的
+===解决
+ubuntu20.04怎么彻底卸载clang和llvm
+
+首先，打开终端并使用以下命令卸载clang和llvm的软件包： sudo apt remove clang llvm
+接下来，使用以下命令删除clang和llvm的配置文件： sudo apt purge clang llvm
+然后，使用以下命令删除clang和llvm的依赖包： sudo apt autoremove
+最后，使用以下命令清理系统中的残留文件： sudo apt autoclean
+
+
+
+最后
+
+amd00@MZ32-00:~/yk_repo/triton/build$ ll
+
+-rwxrwxr-x  1 amd00 amd00 120380568  2月 15 22:18 libtriton.so*
+
+amd00@MZ32-00:~/yk_repo/triton/build$ cp libtriton.so ../python/triton/_C/
+amd00@MZ32-00:~/yk_repo/triton/build$ export TRITON_HOME=/home/amd00/yk_repo/triton
+amd00@MZ32-00:~/yk_repo/triton/build$ export PYTHONPATH=$TRITON_HOME/python:${PYTHONPATH}
+
