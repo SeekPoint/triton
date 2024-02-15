@@ -135,7 +135,7 @@ def get_thirdparty_packages(triton_cache_path):
             thirdparty_cmake_args.append(f"-D{p.lib_flag}={package_dir}/lib")
 
     # gd.debuginfo(prj="ds", info=f'thirdparty_cmake_args={thirdparty_cmake_args}')
-    print(f'thirdparty_cmake_args={thirdparty_cmake_args})
+    print(f'thirdparty_cmake_args={thirdparty_cmake_args}')
     return thirdparty_cmake_args
 
 # ---- package data ---
